@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * 简易版的bind
+       *
+       */
+      if (!Function.prototype.bind) {
+        Function.prototype.bind = function (ctx, ...args) {
+          const self = this
+          if (typeof self !== 'function') {
+            return
+          }
+          return function (...fnArgs) {
+            return self.apply(ctx, [...args, ...fnArgs])
+          }
+        }
+      }
+
+      /**
+       * bind绑定后的函数用 new操作符调用时，this还是指向实例
+       *
+       *
+       */
+
+      if(!Function.prototype.bind) {
+        Function.prototype.bind(ctx, ...args) {
+          const self = this
+          if(typeof self !== 'function') {
+            return
+          }
+
+          function Bound(...fnArgs) {
+            return self.apply(this instanceof Bound ? this : ctx, [...fnArgs, ...args])
+          }
+          if(self.prototype) {
+            Bound.prototype = Object.create(self.prototype)
+          }
+          return Bound
+        }
+      }
+    </script>
+  </body>
+</html>

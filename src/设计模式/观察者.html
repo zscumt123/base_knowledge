@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * 观察者模式只有观察者和被观察者
+       *
+       *
+       */
+
+      class Subject {
+        constructor() {
+          this.observers = new Set()
+        }
+        add(observer) {
+          this.observers.add(observer)
+        }
+        remove(observer) {
+          this.observers.delete(observer)
+        }
+        notify() {
+          this.observers.forEach((item) => {
+            item.update()
+          })
+        }
+      }
+
+      class Observer {
+        update(...args) {
+          console.log(args)
+        }
+      }
+      let sub = new Subject()
+      let ob1 = new Observer()
+      let obj2 = new Observer()
+      sub.add(ob1)
+      sub.add(obj2)
+      sub.notify()
+    </script>
+  </body>
+</html>

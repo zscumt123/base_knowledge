@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      Function.prototype.myCall = function (ctx, ...args) {
+        if (typeof this !== 'function') {
+          return
+        }
+        const key = Symbol()
+        ctx = ctx || window
+        ctx[key] = this
+        //谁调用this就是谁
+        const res = ctx[key](...args)
+        delete ctx[key]
+        return res
+      }
+
+      Function.prototype.myApply = function (ctx, args) {
+        if (typeof this !== 'function') {
+          return
+        }
+        const key = Symbol()
+        args = Array.isArray(args) ? args : []
+        ctx = ctx || window
+        ctx[key] = this
+        const res = ctx[key](...args)
+        delete ctx[key]
+        return res
+      }
+    </script>
+  </body>
+</html>

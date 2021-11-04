@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * vue源码中的traverse方法，用来递归访问对象上的值。收集依赖
+       *
+       *
+       *
+       *
+       *
+       */
+      function traverse(val, seen = new Set()) {
+        let isArr = Array.isArray(val)
+        if (!isArr && typeof isArr !== 'object') {
+          return
+        }
+        let depId = val.__ob__.depId
+        if (seen.has(depId)) {
+          return
+        }
+        seen.add(depId)
+
+        if (isArr) {
+          let i = isArr.length
+          while (i--) {
+            traverse(val[i], seen)
+          }
+        } else {
+          const keys = Object.keys(val)
+          let i = keys.length
+          while (i--) {
+            traverse(val[keys[i]], seen)
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

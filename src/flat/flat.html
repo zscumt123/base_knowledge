@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const eachFlat = (arr, dep = 1) => {
+        const result = []
+        function fn(arr, dep) {
+          arr.forEach((val) => {
+            if (Array.isArray(val) && dep > 0) {
+              fn(val, dep - 1)
+            } else {
+              result.push(val)
+            }
+          })
+        }
+        return result
+      }
+      function flatten(arr) {
+        let stack = [...arr]
+        let res = []
+        while (stack.length) {
+          let current = stack.pop()
+          if (Array.isArray(current)) {
+            stack.push(...current)
+          } else {
+            res.push(current)
+          }
+        }
+        return res.reverse()
+      }
+    </script>
+  </body>
+</html>

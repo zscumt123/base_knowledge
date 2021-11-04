@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <a href="http://github.com/">test</a>
+    <iframe src="http://www.baidu.com"></iframe>
+    <script>
+      /**
+       * cookie的最大容量是4k，容量是针对key value中的value的
+       * 而不是总容量4k，是其中的某个key的容量为4k
+       *
+       *
+       * cookie，localStorage以及sessionStorage的区别
+       * 1.cookie容量较小，只有4k，而localStorage和sessionStorage一般为5M
+       * 2.在请求过程中浏览器会携带cookie，而localStorage以及sessionStoage只作为本地存储，不和服务器通信，
+       * 3.cookie和sessionStorage有默认的过期时间，一般浏览器会话结束就过期，
+       *    cookie可以设置过期时间， 而localStorage为永久存在，除非手动清除
+       * 4.同源窗口不同页面可以共享localStorage，cookie的值，
+       * 通过跳转同源的页面可以共享sessionStorage的值（重新打开一个同源页面不会共享sessionStorage）
+       * cookie可以通过设置document.domain来共享cookie，
+       *
+       * 5.cookie特有的属性
+       *    【1】domain决定cookie是在哪个域内有效的，如果设置成一级域，则子域可以访问
+       *    【2】path 决定cookie是在哪个路径有效的。比如设置成/test，则子路径也可访问 /test/a  /test/b
+       *    【3】Expires/Max-age 决定cookie的过期时间
+       *    【4】HttpOnly决定cookie是不是只用于http传输的。如果设置为true，则无法通过document.cookie获取cookie的值
+       *    【5】Secure表示cookie是不是只能通过https协议传输
+       *    【6】SameSite是用来限制第三方cookie的 有三个值
+       *          (1)strict表示严格的，完全禁用第三方cookie，跨站点是任何情况下都不会发送cookie
+       *          (2)lax 大多数情况也是不发送第三方 Cookie，但是导航到目标网址的 Get 请求除外(a标签，form的get请求)
+       *          (3)none 不做限制
+       *    【7】Priority优先级，Low,Medium, High,当cookie数量超出限制时候，低优先级的会被优先清除
+       *
+       */
+      let kb = new Array(1024).fill('a').join('')
+      document.cookie = `kb=${kb + kb + kb + kb.slice(0, 1021)}`
+    </script>
+  </body>
+</html>

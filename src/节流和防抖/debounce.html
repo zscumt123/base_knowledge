@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      // function debounce(fn, delay) {
+      //   let timer = null
+      //   return function () {
+      //     if (timer) {
+      //       clearTimeout(timer)
+      //     }
+      //     timer = setTimeout(fn, delay)
+      //   }
+      // }
+
+      function debounce(func, wait, options) {
+        let lastArgs,
+          lastThis,
+          lastCallTime,
+          lastInvokeTime = 0,
+          timer,
+          result,
+          maxing = false,
+          maxWait,
+          leading = false,
+          trailing = true
+
+        wait = Number(wait) || 0
+        if (typeof options === 'object') {
+          maxing = 'maxWait' in options
+          maxWait = maxing
+            ? Math.max(Number(options.maxWait) || 0, wait)
+            : maxWait
+          leading = !!options.leading
+          trailing = 'trailing' in options ? !!options.trailing : trailing
+        }
+
+        function shouldInvoke(time) {
+          let lastSinceCallTime = time - lastCallTime
+          let lastSinceInvokeTime = time - lastInvokeTime
+          return (
+            lastCallTime === undefined ||
+            lastSinceCallTime >= wait ||
+            lastSinceCallTime < 0 ||
+            (maxing && lastSinceInvokeTime > maxWait)
+          )
+        }
+
+        function invokeFn(time) {
+          lastInvokeTime = time
+          const args = lastArgs,
+            currentThis = lastThis
+          lastArgs = lastThis = undefined
+          result = func.apply(currentThis, args)
+          return result
+        }
+        function remainingWait(time) {
+          let lastSinceCallTime = time - lastCallTime
+          let lastSinceInvokeTime = time - lastInvokeTime
+          let remain = wait - lastSinceCallTime
+          return maxing
+            ? Math.min(remain, maxWait - lastSinceInvokeTime)
+            : remain
+        }
+
+        function trailingEdge(time) {
+          timer = undefined
+          if (trailing && lastArgs) {
+            return invokeFn(time)
+          }
+          lastArgs = lastThis = undefined
+          return result
+        }
+
+        function timeExpired() {
+          let now = Date.now()
+          if (shouldInvoke(now)) {
+            return trailingEdge(now)
+          }
+          timer = setTimeout(timeExpired, remainingWait(now))
+        }
+        function leadingEdge(time) {
+          lastInvokeTime = time
+          timer = setTimeout(timeExpired, wait)
+          return leading ? invokeFn(time) : result
+        }
+
+        function debounced() {
+          let now = Date.now(),
+            isInvoke = shouldInvoke(now)
+          lastArgs = arguments
+          lastThis = this
+          lastCallTime = now
+          if (isInvoke) {
+            if (timer === undefined) {
+              return leadingEdge(now)
+            }
+            if (maxing) {
+              clearTimeout(timer)
+              timer = setTimeout(timeExpired, wait)
+              return invokeFn(lastCallTime)
+            }
+          }
+          if (timer === undefined) {
+            timer = setTimeout(timeExpired, wait)
+          }
+        }
+        return debounced
+      }
+
+      function mouseMoveHandle(e) {
+        console.log(e.clientX, e.clientY)
+      }
+      document.body.addEventListener(
+        'mousemove',
+        debounce(mouseMoveHandle, 1000, {
+          // leading: true,
+          trailing: true,
+          maxWait: 500,
+        })
+      )
+    </script>
+  </body>
+</html>

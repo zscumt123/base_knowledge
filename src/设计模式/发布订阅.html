@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      class EventEmitter {
+        constructor() {
+          this.eventMap = new Map()
+        }
+
+        on(type, fn) {
+          if (Array.isArray(type)) {
+            for (let key of type) {
+              this.on(key, fn)
+            }
+          } else {
+            if (!this.eventMap.get(type)) {
+              this.eventMap.set(type, [])
+            }
+            this.eventMap.get(type).push(fn)
+          }
+        }
+        once(type, fn) {
+          const on = (...args) => {
+            this.off(type, on)
+            fn.apply(this, args)
+          }
+          this.on(type, on)
+        }
+        off(type, fn) {
+          if (!arguments.length) {
+            this.eventMap = new Map()
+            return
+          }
+          if (Array.isArray(type)) {
+            for (let key of type) {
+              this.off(key, fn)
+            }
+            return
+          }
+          const fns = this.eventMap.get(type)
+          if (!fns || !fns.length) {
+            return
+          }
+
+          if (!fn) {
+            this.eventMap.set(type, [])
+            return
+          }
+          let i = fns.length
+          while (i--) {
+            if (fns[i] === fn) {
+              fns.splice(i, 1)
+              break
+            }
+          }
+        }
+        emit(type, ...args) {
+          const cbs = this.eventMap.get(type)
+          if (cbs) {
+            for (let cb of cbs) {
+              cb.apply(this, ...args)
+            }
+          }
+        }
+      }
+
+      let emitter = new EventEmitter()
+      emitter.on('a', function () {
+        console.log('a')
+      })
+      let fn = function () {
+        console.log('bc')
+      }
+      emitter.on(['b', 'c'], fn)
+      emitter.emit('a')
+      emitter.emit('b')
+      emitter.emit('c')
+    </script>
+  </body>
+</html>
